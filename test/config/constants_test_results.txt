@@ -1,0 +1,8 @@
+--- Starting constants_test ---
+Input: src/config/constants.js
+[PASS] IDLE_THRESHOLD_MS: matched 60000
+[PASS] TICK_INTERVAL_MS: matched 1000
+[PASS] DB_FILE_NAME: matched sessions.db
+[PASS] TRACKER_WINDOW_SIZE: matched {"width":320,"height":240}
+[PASS] DASHBOARD_WINDOW_SIZE: matched {"width":1100,"height":750}
+Overall Result: SUCCESS

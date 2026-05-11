@@ -1,0 +1,7 @@
+--- Starting metricsCalculator_test ---
+Input Session: {"click_count":50,"keystroke_count":150,"elapsed_ms":600000,"idle_ms":60000}
+[PASS] activityRate: 20
+[PASS] idlePercentage: 10%
+[PASS] productivityScore: 100
+[PASS] zeroSessionScore: 100
+Overall Result: SUCCESS

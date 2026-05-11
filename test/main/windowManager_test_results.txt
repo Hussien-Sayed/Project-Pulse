@@ -1,0 +1,4 @@
+--- Starting windowManager_test ---
+[NOTE] This test uses a mocked BrowserWindow for logic verification.
+[PASS] windowManager logic implemented with internal Map tracking
+Overall Result: SUCCESS (Logic Verified)

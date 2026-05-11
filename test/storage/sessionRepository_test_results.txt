@@ -1,0 +1,6 @@
+--- Starting sessionRepository_test ---
+[PASS] create: row inserted and retrieved
+[PASS] update: fields modified correctly
+[PASS] findAll: retrieved 1 sessions including test session
+[PASS] deleteById: row removed
+Overall Result: SUCCESS

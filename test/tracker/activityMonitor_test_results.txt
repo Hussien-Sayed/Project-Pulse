@@ -1,0 +1,6 @@
+--- Starting activityMonitor_test ---
+[PASS] recordClick: ignored while not monitoring
+[PASS] getActivityMetrics: correct counts (clicks: 1, keys: 2)
+[PASS] eventBus: emitted activity event for each record
+[PASS] resetCounters: reset to zero
+Overall Result: SUCCESS

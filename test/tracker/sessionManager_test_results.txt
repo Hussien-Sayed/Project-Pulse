@@ -1,0 +1,6 @@
+--- Starting sessionManager_test ---
+[PASS] createSession: initialized correctly
+[PASS] pause: status is paused, elapsedMs is 101
+[PASS] resume: status is running
+[PASS] stop: status is stopped, finalElapsedMs is 201
+Overall Result: SUCCESS

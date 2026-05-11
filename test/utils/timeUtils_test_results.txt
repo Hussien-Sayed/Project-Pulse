@@ -1,0 +1,9 @@
+--- Starting timeUtils_test ---
+[PASS] formatDuration(0): 00:00:00
+[PASS] formatDuration(1000): 00:00:01
+[PASS] formatDuration(60000): 00:01:00
+[PASS] formatDuration(3600000): 01:00:00
+[PASS] formatDuration(3661000): 01:01:01
+[PASS] toDateString: 2026-05-08
+[PASS] calculateDifference(100, 250): 150
+Overall Result: SUCCESS

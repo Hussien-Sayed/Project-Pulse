@@ -1,0 +1,6 @@
+--- Starting idleDetector_test ---
+Detector started with 100ms threshold
+[PASS] _checkIdle: detected idleness
+[PASS] updateActivity: resumed from idle
+[PASS] getIdleMs: accumulated 211ms
+Overall Result: SUCCESS

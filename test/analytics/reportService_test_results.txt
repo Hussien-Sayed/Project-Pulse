@@ -1,0 +1,5 @@
+--- Starting reportService_test ---
+[PASS] getSessionReport: retrieved session with computed metrics
+[PASS] getAllSessionsSummary: summary includes metrics for all rows
+[PASS] groupSessionsByDate: grouped correctly under 2026-05-08
+Overall Result: SUCCESS

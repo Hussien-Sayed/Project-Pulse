@@ -1,0 +1,5 @@
+--- Starting database_test ---
+[PASS] connect: database file created at E:\projects\project-pulse\data\sessions.db
+[PASS] initSchema: sessions table created
+[PASS] initSchema: all columns present
+Overall Result: SUCCESS

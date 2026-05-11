@@ -1,0 +1,5 @@
+--- Starting eventBus_test ---
+[PASS] on/emit: event received with correct payload
+[PASS] unsubscribe: callback not called after unsub
+[PASS] multiple listeners: all called
+Overall Result: SUCCESS

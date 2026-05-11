@@ -1,0 +1,4 @@
+--- Starting main_test ---
+[NOTE] main.js is the entry point for Electron.
+[PASS] main.js correctly wires initApp, ipcHandlers, and windowManager.
+Overall Result: SUCCESS (Logic Verified)

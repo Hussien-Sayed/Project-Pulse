@@ -1,0 +1,6 @@
+--- Starting env_test ---
+DB_PATH: E:\projects\project-pulse\data\sessions.db
+NODE_ENV: development
+[PASS] DB_PATH: resolved to absolute path
+[PASS] NODE_ENV: matched default development
+Overall Result: SUCCESS
