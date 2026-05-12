@@ -28,7 +28,7 @@ const SessionDetail = ({ report }) => {
                 />
                 <MetricCard 
                     label="Total Duration" 
-                    value={Math.floor(session.elapsed_ms / 60000)} 
+                    value={Math.ceil(session.elapsed_ms / 60000)} 
                     sub="minutes"
                 />
                 <MetricCard 
@@ -45,12 +45,20 @@ const SessionDetail = ({ report }) => {
 
             <div className="stats-breakdown">
                 <div className="stat-row">
-                    <span>Mouse Clicks</span>
-                    <span>{session.click_count}</span>
+                    <span>Start Time</span>
+                    <span>{new Date(session.start_time).toLocaleTimeString()}</span>
                 </div>
                 <div className="stat-row">
-                    <span>Keystrokes</span>
-                    <span>{session.keystroke_count}</span>
+                    <span>End Time</span>
+                    <span>{session.end_time ? new Date(session.end_time).toLocaleTimeString() : 'In Progress'}</span>
+                </div>
+                <div className="stat-row">
+                    <span>Project</span>
+                    <span>{session.project || 'None'}</span>
+                </div>
+                <div className="stat-row">
+                    <span>Events</span>
+                    <span>{session.event_count}</span>
                 </div>
                 <div className="stat-row">
                     <span>Idle Duration</span>

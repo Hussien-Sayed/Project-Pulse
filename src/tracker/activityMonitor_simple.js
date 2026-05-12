@@ -2,7 +2,7 @@ import eventBus from '../utils/eventBus.js';
 import { logIf, warnIf, errorIf, shouldLog } from '../config/logSettings.js';
 
 /**
- * Simplified Activity Monitor - counts events only
+ * Simplified Activity Monitor - counts events only (no classification)
  * Uses Electron's powerMonitor to detect system activity
  * Emits 'activity' events to eventBus to reset idle timers.
  */

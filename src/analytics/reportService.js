@@ -37,19 +37,31 @@ class ReportService {
     }
 
     /**
-     * Groups a session array by YYYY-MM-DD date key
+     * Groups sessions by week and then by day
      * @param {Array} sessions 
      * @returns {Object}
      */
-    groupSessionsByDate(sessions) {
-        return sessions.reduce((groups, session) => {
-            const dateKey = timeUtils.toDateString(session.created_at);
-            if (!groups[dateKey]) {
-                groups[dateKey] = [];
-            }
-            groups[dateKey].push(session);
-            return groups;
-        }, {});
+    groupSessionsHierarchical(sessions) {
+        const groups = {}; // Week -> Day -> Sessions
+        
+        sessions.forEach(session => {
+            const date = new Date(session.created_at);
+            
+            // Get week number (simplified)
+            const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+            const pastDaysOfYear = (date - firstDayOfYear) / 86400000;
+            const weekNum = Math.ceil((pastDaysOfYear + firstDayOfYear.getDay() + 1) / 7);
+            const weekKey = `Week ${weekNum}, ${date.getFullYear()}`;
+            
+            const dayKey = timeUtils.toDateString(session.created_at);
+            
+            if (!groups[weekKey]) groups[weekKey] = {};
+            if (!groups[weekKey][dayKey]) groups[weekKey][dayKey] = [];
+            
+            groups[weekKey][dayKey].push(session);
+        });
+        
+        return groups;
     }
 }
 

@@ -127,9 +127,6 @@ class TrackerController {
         const activity = this.activityMonitor.getActivityMetrics();
         const idleMs = this.idleDetector.getIdleMs();
 
-        // Read session from database to get end_time and other stored fields
-        const dbSession = sessionRepository.findById(base.sessionId);
-        
         const row = sessionRepository.db.prepare(`
             SELECT SUM(elapsed_ms) as total 
             FROM sessions 
@@ -143,10 +140,7 @@ class TrackerController {
             ...base,
             ...activity,
             idleMs,
-            dailyTotalMs,
-            end_time: dbSession?.end_time,
-            created_at: dbSession?.created_at,
-            project: dbSession?.project || base.project
+            dailyTotalMs
         };
     }
 
@@ -187,19 +181,13 @@ class TrackerController {
         const session = this.getCurrentSession();
         if (!session) return;
 
-        const updateData = {
+        sessionRepository.update(session.id, {
             status: session.status,
             elapsed_ms: session.elapsedMs,
             idle_ms: session.idleMs,
             event_count: session.eventCount,
             ...extraData
-        };
-
-        logIf('trackerController', 'operations', `Syncing to DB - Session: ${session.sessionId}, Events: ${session.eventCount}, Data: ${JSON.stringify(updateData)}`);
-        
-        sessionRepository.update(session.sessionId, updateData);
-        
-        logIf('trackerController', 'operations', `DB sync completed for session ${session.sessionId}`);
+        });
     }
 }
 

@@ -8,10 +8,10 @@
  * @returns {number}
  */
 export function calculateActivityRate(session) {
-    const { click_count = 0, keystroke_count = 0, elapsed_ms = 0 } = session;
+    const { event_count = 0, elapsed_ms = 0 } = session;
     if (elapsed_ms === 0) return 0;
     
-    const totalEvents = click_count + keystroke_count;
+    const totalEvents = event_count;
     const elapsedMinutes = elapsed_ms / 60000;
     
     return totalEvents / elapsedMinutes;

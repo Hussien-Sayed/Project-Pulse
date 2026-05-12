@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SessionInput from '../components/SessionInput.jsx';
+import AutocompleteInput from '../components/AutocompleteInput.jsx';
 import TimerControls from '../components/TimerControls.jsx';
 import LiveTimer from '../components/LiveTimer.jsx';
 import ActivityBadge from '../components/ActivityBadge.jsx';
@@ -9,18 +9,26 @@ import ActivityBadge from '../components/ActivityBadge.jsx';
  */
 const TrackerApp = () => {
     const [title, setTitle] = useState('');
+    const [project, setProject] = useState('');
     const [status, setStatus] = useState('idle');
     const [elapsedMs, setElapsedMs] = useState(0);
-    const [clickCount, setClickCount] = useState(0);
-    const [keystrokeCount, setKeystrokeCount] = useState(0);
+    const [eventCount, setEventCount] = useState(0);
+    const [taskSuggestions, setTaskSuggestions] = useState([]);
+    const [projectSuggestions, setProjectSuggestions] = useState([]);
+
+    const [isExpanded, setIsExpanded] = useState(window.innerHeight > 150);
 
     useEffect(() => {
+        const handleResize = () => {
+            setIsExpanded(window.innerHeight > 150);
+        };
+        window.addEventListener('resize', handleResize);
+        
         // Listen for ticks from main process
         const unsub = window.electronAPI.onTickUpdate((data) => {
             if (data) {
-                setElapsedMs(data.elapsedMs);
-                setClickCount(data.clickCount);
-                setKeystrokeCount(data.keystrokeCount);
+                setElapsedMs(data.dailyTotalMs ?? data.elapsedMs);
+                setEventCount(data.eventCount);
                 setStatus(data.status);
                 if (data.title && !title) setTitle(data.title);
             }
@@ -29,20 +37,37 @@ const TrackerApp = () => {
         // Load current session if one is already running
         window.electronAPI.getCurrentSession().then(session => {
             if (session) {
-                setTitle(session.title);
+                setTitle(session.title || '');
+                setProject(session.project || '');
                 setStatus(session.status);
-                setElapsedMs(session.elapsedMs);
-                setClickCount(session.clickCount);
-                setKeystrokeCount(session.keystrokeCount);
+                setElapsedMs(session.dailyTotalMs ?? session.elapsedMs);
+                setEventCount(session.eventCount);
             }
         });
 
-        return () => unsub();
+        // Load suggestions
+        window.electronAPI.getTasks().then(setTaskSuggestions);
+        window.electronAPI.getProjects().then(setProjectSuggestions);
+
+        const handleActivity = (e) => {
+            const type = e.type === 'keydown' ? 'keystroke' : 'click';
+            window.electronAPI.reportActivity(type);
+        };
+
+        window.addEventListener('mousedown', handleActivity);
+        window.addEventListener('keydown', handleActivity);
+
+        return () => {
+            unsub();
+            window.removeEventListener('resize', handleResize);
+            window.removeEventListener('mousedown', handleActivity);
+            window.removeEventListener('keydown', handleActivity);
+        };
     }, []);
 
     const handleStart = async () => {
         if (!title.trim()) return;
-        const session = await window.electronAPI.startTracking(title);
+        const session = await window.electronAPI.startTracking(title, project);
         if (session) setStatus('running');
     };
 
@@ -57,11 +82,10 @@ const TrackerApp = () => {
     };
 
     const handleStop = async () => {
-        await window.electronAPI.stopTracking();
+        const session = await window.electronAPI.stopTracking();
         setStatus('idle');
-        setElapsedMs(0);
-        setClickCount(0);
-        setKeystrokeCount(0);
+        setElapsedMs(session ? session.dailyTotalMs : 0);
+        setEventCount(0);
         setTitle('');
     };
 
@@ -77,25 +101,44 @@ const TrackerApp = () => {
             </header>
 
             <main>
-                <SessionInput 
-                    value={title} 
-                    onChange={setTitle} 
-                    disabled={status !== 'idle'} 
-                />
+                {isExpanded && (
+                    <div className="input-section">
+                        <AutocompleteInput 
+                            id="task-input"
+                            label="What are you working on?"
+                            value={title} 
+                            onChange={setTitle} 
+                            placeholder="Enter task name"
+                            options={taskSuggestions}
+                            disabled={status !== 'idle'} 
+                        />
+                        <AutocompleteInput 
+                            id="project-input"
+                            label="Project (Optional)"
+                            value={project} 
+                            onChange={setProject} 
+                            placeholder="Select or enter project"
+                            options={projectSuggestions}
+                            disabled={status !== 'idle'} 
+                        />
+                    </div>
+                )}
 
                 <div className="timer-section">
                     <LiveTimer elapsedMs={elapsedMs} />
-                    <ActivityBadge clickCount={clickCount} keystrokeCount={keystrokeCount} />
+                    <ActivityBadge eventCount={eventCount} />
                 </div>
 
-                <TimerControls 
-                    status={status}
-                    onStart={handleStart}
-                    onPause={handlePause}
-                    onResume={handleResume}
-                    onStop={handleStop}
-                    onOpenDashboard={handleOpenDashboard}
-                />
+                {isExpanded && (
+                    <TimerControls 
+                        status={status}
+                        onStart={handleStart}
+                        onPause={handlePause}
+                        onResume={handleResume}
+                        onStop={handleStop}
+                        onOpenDashboard={handleOpenDashboard}
+                    />
+                )}
             </main>
 
             <style jsx>{`
@@ -131,14 +174,22 @@ const TrackerApp = () => {
                 main {
                     display: flex;
                     flex-direction: column;
-                    gap: 20px;
+                    gap: 12px;
                     align-items: center;
+                    width: 100%;
+                }
+                .input-section {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    width: 100%;
                 }
                 .timer-section {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    gap: 12px;
+                    gap: 8px;
+                    margin: 8px 0;
                 }
             `}</style>
         </div>

@@ -1,8 +1,23 @@
-# Project Pulse — Productivity Manager
+# Project Pulse: A Self Productivity Tracking Tool
 
-A premium, state-of-the-art Electron application for tracking time and productivity with real-time analytics and a sleek dark-mode interface.
+No matter what type of work you do on computer, you might need a tool to manage and track your productivity. This is basically reason why this tool exists. This tool should help you answer these questions:
 
-## 🚀 Getting Started
+* Are you assigning the proper time slots for your tasks
+* Are you taking too much rest or are you over-working during your day
+* Do you need someone to remind you to look away fom your screen every 20 mins
+* How to identify key tricks to maximize your productivity
+
+
+The tool should generally Allow you to:
+* Define "Projects" where you can break your project into several smaller tasks and add estimated timeline
+* Track time within projects and tasks
+* Set daily reminders, like maybe a reminder to check your mail every 2 hours. 
+
+
+
+
+
+## 🚀 Building Development Environmet
 
 ### Prerequisites
 Ensure you have Node.js installed. If you encounter errors related to `better-sqlite3`, you may need to rebuild native modules for your specific Electron version:

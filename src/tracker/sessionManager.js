@@ -8,6 +8,7 @@ export default class SessionManager {
     constructor() {
         this.sessionId = null;
         this.title = '';
+        this.project = '';
         this.status = 'idle'; // 'idle' | 'running' | 'paused' | 'stopped'
         this.startTime = null;
         this.pausedAt = null;
@@ -18,9 +19,10 @@ export default class SessionManager {
      * Initializes a new session
      * @param {string} title 
      */
-    createSession(title) {
+    createSession(title, project = '') {
         this.sessionId = uuidv4();
         this.title = title;
+        this.project = project;
         this.status = 'running';
         this.startTime = Date.now();
         this.pausedAt = null;
@@ -79,6 +81,7 @@ export default class SessionManager {
         return {
             sessionId: this.sessionId,
             title: this.title,
+            project: this.project,
             status: this.status,
             startTime: this.startTime,
             elapsedMs: this.getElapsedMs()

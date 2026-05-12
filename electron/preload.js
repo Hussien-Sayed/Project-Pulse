@@ -5,7 +5,7 @@ const { contextBridge, ipcRenderer } = require('electron');
  */
 contextBridge.exposeInMainWorld('electronAPI', {
     // Tracking commands
-    startTracking: (title) => ipcRenderer.invoke('tracker:start', title),
+    startTracking: (title, project) => ipcRenderer.invoke('tracker:start', title, project),
     pauseTracking: () => ipcRenderer.invoke('tracker:pause'),
     resumeTracking: () => ipcRenderer.invoke('tracker:resume'),
     stopTracking: () => ipcRenderer.invoke('tracker:stop'),
@@ -15,9 +15,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getSessions: () => ipcRenderer.invoke('sessions:getAll'),
     getSessionReport: (sessionId) => ipcRenderer.invoke('sessions:report', sessionId),
     getAllSummary: () => ipcRenderer.invoke('sessions:summary'),
+    getProjects: () => ipcRenderer.invoke('sessions:projects'),
+    getTasks: () => ipcRenderer.invoke('sessions:tasks'),
     
     // Window management
     openDashboard: () => ipcRenderer.invoke('window:open-dashboard'),
+    
+    // Activity reporting
+    reportActivity: (type) => ipcRenderer.send('activity:report', type),
     
     // Event listeners
     onTickUpdate: (callback) => {

@@ -22,20 +22,19 @@ class SessionRepository {
     create(data) {
         this._ensureConnected();
         const {
-            id, title, status, start_time, 
+            id, title, project, status, start_time, 
             created_at = Date.now(),
-            elapsed_ms = 0, idle_ms = 0, 
-            click_count = 0, keystroke_count = 0 
+            elapsed_ms = 0, idle_ms = 0, event_count = 0
         } = data;
 
         const stmt = this.db.prepare(`
             INSERT INTO sessions (
-                id, title, status, start_time, created_at, 
-                elapsed_ms, idle_ms, click_count, keystroke_count
+                id, title, project, status, start_time, created_at, 
+                elapsed_ms, idle_ms, event_count
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
-        stmt.run(id, title, status, start_time, created_at, elapsed_ms, idle_ms, click_count, keystroke_count);
+        stmt.run(id, title, project, status, start_time, created_at, elapsed_ms, idle_ms, event_count);
         
         return this.findById(id);
     }
@@ -90,12 +89,39 @@ class SessionRepository {
     }
 
     /**
-     * Deletes a session by ID
-     * @param {string} id 
+     * Calculates the total elapsed milliseconds for all sessions today.
+     * @returns {number}
      */
-    deleteById(id) {
+    getDailyTotalMs() {
         this._ensureConnected();
-        this.db.prepare("DELETE FROM sessions WHERE id = ?").run(id);
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const row = this.db.prepare(`
+            SELECT SUM(elapsed_ms) as total 
+            FROM sessions 
+            WHERE created_at >= ?
+        `).get(startOfDay.getTime());
+        
+        return row ? (row.total || 0) : 0;
+    }
+
+    /**
+     * Retrieves distinct project names
+     * @returns {Array<string>}
+     */
+    getDistinctProjects() {
+        this._ensureConnected();
+        return this.db.prepare("SELECT DISTINCT project FROM sessions WHERE project IS NOT NULL AND project != ''").all().map(r => r.project);
+    }
+
+    /**
+     * Retrieves distinct task titles
+     * @returns {Array<string>}
+     */
+    getDistinctTasks() {
+        this._ensureConnected();
+        return this.db.prepare("SELECT DISTINCT title FROM sessions WHERE title IS NOT NULL AND title != ''").all().map(r => r.title);
     }
 }
 

@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 import fs from 'fs';
 import path from 'path';
 import { DB_PATH } from '../config/env.js';
+import { logIf, shouldLog } from '../config/logSettings.js';
 
 /**
  * Manages the SQLite database connection and schema
@@ -23,7 +24,9 @@ class AppDatabase {
             fs.mkdirSync(dbDir, { recursive: true });
         }
 
-        this.db = new Database(DB_PATH, { verbose: console.log });
+        // Conditional SQL logging based on settings
+        const verboseLogger = shouldLog('storage', 'queries') ? console.log : null;
+        this.db = new Database(DB_PATH, { verbose: verboseLogger });
         this.db.pragma('journal_mode = WAL'); // Performance optimization
         
         return this.db;
@@ -39,13 +42,13 @@ class AppDatabase {
             CREATE TABLE IF NOT EXISTS sessions (
                 id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
+                project TEXT,
                 status TEXT NOT NULL,
                 start_time INTEGER NOT NULL,
                 end_time INTEGER,
                 elapsed_ms INTEGER DEFAULT 0,
                 idle_ms INTEGER DEFAULT 0,
-                click_count INTEGER DEFAULT 0,
-                keystroke_count INTEGER DEFAULT 0,
+                event_count INTEGER DEFAULT 0,
                 created_at INTEGER NOT NULL
             );
             
@@ -53,7 +56,7 @@ class AppDatabase {
         `;
 
         this.db.exec(schema);
-        console.log('Database schema initialized');
+        logIf('storage', 'operations', 'Database schema initialized');
     }
 
     /**

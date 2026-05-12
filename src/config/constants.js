@@ -8,7 +8,7 @@ export const DB_FILE_NAME = 'sessions.db';
 
 export const TRACKER_WINDOW_SIZE = {
   width: 320,
-  height: 240
+  height: 480
 };
 
 export const DASHBOARD_WINDOW_SIZE = {

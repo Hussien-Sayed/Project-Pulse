@@ -1,4 +1,5 @@
 import windowManager from './windowManager.js';
+import sessionRepository from '../storage/sessionRepository.js';
 
 /**
  * Registers all IPC handlers and wires events to the renderer.
@@ -12,19 +13,27 @@ class IPCHandlers {
      */
     register(ipcMain, { trackerController, reportService }) {
         // Tracker actions
-        ipcMain.handle('tracker:start',   (_, title) => trackerController.startSession(title));
-        ipcMain.handle('tracker:pause',   ()         => trackerController.pauseSession());
-        ipcMain.handle('tracker:resume',  ()         => trackerController.resumeSession());
-        ipcMain.handle('tracker:stop',    ()         => trackerController.stopSession());
-        ipcMain.handle('tracker:current', ()         => trackerController.getCurrentSession());
+        ipcMain.handle('tracker:start',   (_, title, project) => trackerController.startSession(title, project));
+        ipcMain.handle('tracker:pause',   ()                  => trackerController.pauseSession());
+        ipcMain.handle('tracker:resume',  ()                  => trackerController.resumeSession());
+        ipcMain.handle('tracker:stop',    ()                  => trackerController.stopSession());
+        ipcMain.handle('tracker:current', ()                  => trackerController.getCurrentSession());
 
         // Session data & analytics
         ipcMain.handle('sessions:getAll', ()         => reportService.getAllSessionsSummary());
         ipcMain.handle('sessions:report', (_, id)    => reportService.getSessionReport(id));
         ipcMain.handle('sessions:summary',()         => reportService.getAllSessionsSummary());
+        ipcMain.handle('sessions:projects', ()       => sessionRepository.getDistinctProjects());
+        ipcMain.handle('sessions:tasks',    ()       => sessionRepository.getDistinctTasks());
+
+        // Activity reporting - now handled automatically by system-wide monitoring
+        // Manual activity reporting no longer needed
 
         // Window management
-        ipcMain.handle('window:open-dashboard', ()   => windowManager.createDashboardWindow());
+        ipcMain.handle('window:open-dashboard', ()   => {
+            windowManager.createDashboardWindow();
+            return { success: true };
+        });
         
         console.log('IPCHandlers: All handlers registered');
     }

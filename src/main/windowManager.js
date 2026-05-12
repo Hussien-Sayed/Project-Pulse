@@ -31,8 +31,8 @@ class WindowManager {
             width: TRACKER_WINDOW_SIZE.width,
             height: TRACKER_WINDOW_SIZE.height,
             alwaysOnTop: true,
-            frame: false,
-            resizable: false,
+            frame: true,
+            resizable: true,
             webPreferences: {
                 preload: path.join(__dirname, '../../electron/preload.js'),
                 contextIsolation: true,
@@ -46,8 +46,12 @@ class WindowManager {
             win.loadFile(path.join(__dirname, '../ui/tracker.html'));
         }
         
-        win.on('closed', () => {
+        win.setMenu(null);
+        
+        win.on('closed', async () => {
             this.windows.delete('tracker');
+            const { app } = (await import('electron')).default;
+            app.quit();
         });
 
         this.windows.set('tracker', win);
@@ -60,8 +64,17 @@ class WindowManager {
      */
     createDashboardWindow() {
         if (this.windows.has('dashboard')) {
-            this.windows.get('dashboard').focus();
-            return this.windows.get('dashboard');
+            const dashWin = this.windows.get('dashboard');
+            if (dashWin.isVisible()) {
+                dashWin.hide();
+                const trackerWin = this.windows.get('tracker');
+                if (trackerWin) trackerWin.show();
+            } else {
+                dashWin.show();
+                const trackerWin = this.windows.get('tracker');
+                if (trackerWin) trackerWin.hide();
+            }
+            return dashWin;
         }
 
         const win = new BrowserWindow({
@@ -80,11 +93,20 @@ class WindowManager {
             win.loadFile(path.join(__dirname, '../ui/dashboard.html'));
         }
 
-        win.on('closed', () => {
+        win.setMenu(null);
+
+        win.on('closed', async () => {
             this.windows.delete('dashboard');
+            const { app } = (await import('electron')).default;
+            app.quit();
         });
 
         this.windows.set('dashboard', win);
+        
+        // Hide tracker when showing dashboard
+        const trackerWin = this.windows.get('tracker');
+        if (trackerWin) trackerWin.hide();
+
         return win;
     }
 
