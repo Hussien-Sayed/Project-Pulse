@@ -1,5 +1,9 @@
 # Project Pulse: A Self Productivity Tracking Tool
 
+<div align="center">
+  <img src="assets/logo.png" alt="Project Pulse Logo" width="150" />
+</div>
+
 No matter what type of work you do on computer, you might need a tool to manage and track your productivity. This is basically reason why this tool exists. This tool should help you answer these questions:
 
 * Are you assigning the proper time slots for your tasks
